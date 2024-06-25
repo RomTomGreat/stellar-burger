@@ -7,10 +7,12 @@ import {
   selectUser
 } from '../../services/slices/stellar-burgerSlice';
 import { useAppDispatch, useAppSelector } from '../../services/store';
+import { useNavigate } from 'react-router-dom';
 
 export const Profile: FC = () => {
   /** TODO: взять переменную из стора */
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const user = useAppSelector(selectUser);
   const isLoading = useAppSelector(selectLoading);
 
@@ -36,6 +38,7 @@ export const Profile: FC = () => {
   const handleSubmit = (e: SyntheticEvent) => {
     e.preventDefault();
     dispatch(fetchUserUpdate(formValue));
+    navigate('/');
   };
 
   const handleCancel = (e: SyntheticEvent) => {

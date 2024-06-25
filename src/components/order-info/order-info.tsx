@@ -5,12 +5,22 @@ import { TIngredient } from '@utils-types';
 import { useAppSelector } from '../../services/store';
 import {
   selectIngredients,
-  selectOrderModalData
+  selectOrders
 } from '../../services/slices/stellar-burgerSlice';
+import { redirect, useParams } from 'react-router-dom';
 
 export const OrderInfo: FC = () => {
   /** TODO: взять переменные orderData и ingredients из стора */
-  const orderData = useAppSelector(selectOrderModalData);
+  const params = useParams<{ number: string }>();
+  if (!params.number) {
+    redirect('/feed');
+    return null;
+  }
+
+  const orders = useAppSelector(selectOrders);
+  const orderData = orders.find(
+    (item) => item.number === parseInt(params.number!)
+  );
 
   const ingredients: TIngredient[] = useAppSelector(selectIngredients);
 

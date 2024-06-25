@@ -10,11 +10,14 @@ import {
 import { useAppDispatch, useAppSelector } from '../../services/store';
 import { Preloader } from '@ui';
 import { setCookie } from '../../utils/cookie';
+import { useForm } from '../../hooks/useForm';
 
 export const Register: FC = () => {
-  const [userName, setUserName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const { values, handleChange } = useForm({
+    userName: '',
+    email: '',
+    password: ''
+  });
   const dispatch = useAppDispatch();
   const error = useAppSelector(selectError);
   const isLoading = useAppSelector(selectLoading);
@@ -27,9 +30,9 @@ export const Register: FC = () => {
     e.preventDefault();
     dispatch(
       fetchRegisterUser({
-        email: email,
-        name: userName,
-        password: password
+        name: values.userName,
+        email: values.email,
+        password: values.password
       })
     )
       .unwrap()
@@ -47,12 +50,12 @@ export const Register: FC = () => {
   return (
     <RegisterUI
       errorText={error}
-      email={email}
-      userName={userName}
-      password={password}
-      setEmail={setEmail}
-      setPassword={setPassword}
-      setUserName={setUserName}
+      email={values.email}
+      userName={values.userName}
+      password={values.password}
+      setEmail={handleChange}
+      setPassword={handleChange}
+      setUserName={handleChange}
       handleSubmit={handleSubmit}
     />
   );

@@ -9,10 +9,13 @@ import {
 } from '../../services/slices/stellar-burgerSlice';
 import { Preloader } from '@ui';
 import { setCookie } from '../../utils/cookie';
+import { useForm } from '../../hooks/useForm';
 
 export const Login: FC = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const { values, handleChange } = useForm({
+    email: '',
+    password: ''
+  });
   const dispatch = useAppDispatch();
   const error = useAppSelector(selectError);
   const isLoading = useAppSelector(selectLoading);
@@ -24,7 +27,7 @@ export const Login: FC = () => {
   const handleSubmit = (e: SyntheticEvent) => {
     e.preventDefault();
     dispatch(removeErrorText());
-    dispatch(fetchLogin({ email, password }))
+    dispatch(fetchLogin(values))
       .unwrap()
       .then((payload) => {
         setCookie('accessToken', payload.accessToken);
@@ -39,10 +42,10 @@ export const Login: FC = () => {
   return (
     <LoginUI
       errorText={error}
-      email={email}
-      setEmail={setEmail}
-      password={password}
-      setPassword={setPassword}
+      email={values.email}
+      setEmail={handleChange}
+      password={values.password}
+      setPassword={handleChange}
       handleSubmit={handleSubmit}
     />
   );

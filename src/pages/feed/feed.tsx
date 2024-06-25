@@ -4,7 +4,6 @@ import { TOrder } from '@utils-types';
 import { FC, useEffect } from 'react';
 import {
   fetchFeeds,
-  fetchIngredients,
   removeOrders,
   selectOrders
 } from '../../services/slices/stellar-burgerSlice';
@@ -16,8 +15,8 @@ export const Feed: FC = () => {
   const orders: TOrder[] = useAppSelector(selectOrders);
 
   useEffect(() => {
-    Promise.all([dispatch(fetchIngredients()), dispatch(fetchFeeds())]);
-  });
+    dispatch(fetchFeeds());
+  }, []);
 
   if (!orders.length) {
     return <Preloader />;

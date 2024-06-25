@@ -1,7 +1,5 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import {
-  TLoginData,
-  TRegisterData,
   getFeedsApi,
   getIngredientsApi,
   getOrdersApi,
@@ -31,7 +29,7 @@ type TInitialState = {
   orderModalData: TOrder | null;
   totalOrders: number;
   dailyOrders: number;
-  userOrders: TOrder[] | null;
+  userOrders: TOrder[];
   isAutorization: boolean;
   isInit: boolean;
   isModalOpened: boolean;
@@ -56,7 +54,7 @@ export const initialState: TInitialState = {
   orderModalData: null,
   totalOrders: 0,
   dailyOrders: 0,
-  userOrders: null,
+  userOrders: [],
   isAutorization: false,
   isInit: false,
   isModalOpened: false,
@@ -65,44 +63,22 @@ export const initialState: TInitialState = {
 
 export const fetchIngredients = createAsyncThunk(
   'ingredients/getAll',
-  async () => getIngredientsApi()
+  getIngredientsApi
 );
-
-export const fetchFeeds = createAsyncThunk('orders/all', async () =>
-  getFeedsApi()
-);
-
-export const fetchOrders = createAsyncThunk('user/orders', async () =>
-  getOrdersApi()
-);
-
+export const fetchFeeds = createAsyncThunk('user/feed', getFeedsApi);
+export const fetchOrders = createAsyncThunk('user/orders', getOrdersApi);
 export const fetchOrderBurger = createAsyncThunk(
   'orders/newOrder',
-  async (data: string[]) => orderBurgerApi(data)
+  orderBurgerApi
 );
-
 export const fetchRegisterUser = createAsyncThunk(
-  'register/user',
-  async (data: TRegisterData) => registerUserApi(data)
+  'user/register',
+  registerUserApi
 );
-
-export const fetchLogin = createAsyncThunk(
-  'login/user',
-  async (data: TLoginData) => loginUserApi(data)
-);
-
-export const fetchGetUser = createAsyncThunk('user/get', async () =>
-  getUserApi()
-);
-
-export const fetchLogout = createAsyncThunk('user/logout', async () =>
-  logoutApi()
-);
-
-export const fetchUserUpdate = createAsyncThunk(
-  'user/update',
-  async (user: Partial<TRegisterData>) => updateUserApi(user)
-);
+export const fetchLogin = createAsyncThunk('user/login', loginUserApi);
+export const fetchGetUser = createAsyncThunk('user/get', getUserApi);
+export const fetchLogout = createAsyncThunk('user/logout', logoutApi);
+export const fetchUserUpdate = createAsyncThunk('user/update', updateUserApi);
 
 const stellarBurgerSlice = createSlice({
   name: 'stellarBurger',
@@ -170,14 +146,14 @@ const stellarBurgerSlice = createSlice({
     removeOrders(state) {
       state.orders.length = 0;
     },
-    removeUserOrders(state) {
-      state.userOrders = null;
-    },
     init(state) {
       state.isInit = true;
     },
     openModal(state) {
       state.isModalOpened = true;
+    },
+    closeModal(state) {
+      state.isModalOpened = false;
     }
   },
   selectors: {
@@ -211,8 +187,9 @@ const stellarBurgerSlice = createSlice({
       .addCase(fetchFeeds.pending, (state) => {
         state.loading = true;
       })
-      .addCase(fetchFeeds.rejected, (state) => {
+      .addCase(fetchFeeds.rejected, (state, action) => {
         state.loading = false;
+        state.error = action.error.message as string;
       })
       .addCase(fetchFeeds.fulfilled, (state, action) => {
         state.loading = false;
@@ -223,8 +200,9 @@ const stellarBurgerSlice = createSlice({
       .addCase(fetchOrders.pending, (state) => {
         state.loading = true;
       })
-      .addCase(fetchOrders.rejected, (state) => {
+      .addCase(fetchOrders.rejected, (state, action) => {
         state.loading = false;
+        state.error = action.error.message as string;
       })
       .addCase(fetchOrders.fulfilled, (state, action) => {
         state.loading = false;
@@ -321,6 +299,7 @@ export const {
   selectUserOrders,
   selectIsAutorization,
   selectIsInit,
+  selectIsModalOpened,
   selectError
 } = stellarBurgerSlice.selectors;
 
@@ -333,9 +312,9 @@ export const {
   removeErrorText,
   closeOrderRequest,
   removeOrders,
-  removeUserOrders,
   init,
-  openModal
+  openModal,
+  closeModal
 } = stellarBurgerSlice.actions;
 
 export default stellarBurgerSlice.reducer;

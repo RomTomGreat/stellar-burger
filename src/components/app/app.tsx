@@ -23,13 +23,11 @@ import {
   ProtectedRoute
 } from '@components';
 import {
-  fetchFeeds,
   fetchGetUser,
   fetchIngredients,
   init,
   selectIngredients,
-  selectIsAutorization,
-  selectOrders
+  selectIsAutorization
 } from '../../services/slices/stellar-burgerSlice';
 
 const App = () => {
@@ -37,10 +35,9 @@ const App = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const token = getCookie('accessToken');
-  const backgroundLocation = location.state?.backgroundLocation;
+  const backgroundLocation = location.state && location.state.background;
   const isAutorization = useAppSelector(selectIsAutorization);
   const ingredients = useAppSelector(selectIngredients);
-  const feeds = useAppSelector(selectOrders);
 
   useEffect(() => {
     if (!isAutorization && token) {
@@ -61,12 +58,6 @@ const App = () => {
   useEffect(() => {
     if (!ingredients.length) {
       dispatch(fetchIngredients());
-    }
-  }, []);
-
-  useEffect(() => {
-    if (!feeds.length) {
-      dispatch(fetchFeeds());
     }
   }, []);
 
@@ -129,48 +120,38 @@ const App = () => {
             </ProtectedRoute>
           }
         />
-        <Route
-          path='/ingredients/:id'
-          element={
-            <Modal
-              title={'Детали ингридиентов'}
-              onClose={() => {
-                dispatch(closeModal);
-              }}
-            >
-              <IngredientDetails />
-            </Modal>
-          }
-        />
-        <Route
-          path='/feed/:number'
-          element={
-            <Modal
-              title={'Информация о заказе'}
-              onClose={() => {
-                dispatch(closeModal);
-              }}
-            >
-              <OrderInfo />
-            </Modal>
-          }
-        />
-        <Route
-          path='/profile/orders/:number'
-          element={
-            <Modal
-              title={'Информация о заказе'}
-              onClose={() => {
-                dispatch(closeModal);
-              }}
-            >
-              <ProtectedRoute>
-                <OrderInfo />
-              </ProtectedRoute>
-            </Modal>
-          }
-        />
       </Routes>
+
+      {backgroundLocation && (
+        <Routes>
+          <Route
+            path='/ingredients/:id'
+            element={
+              <Modal title={'Детали ингридиентов'} onClose={closeModal}>
+                <IngredientDetails />
+              </Modal>
+            }
+          />
+          <Route
+            path='/feed/:number'
+            element={
+              <Modal title={'Информация о заказе'} onClose={closeModal}>
+                <OrderInfo />
+              </Modal>
+            }
+          />
+          <Route
+            path='/profile/orders/:number'
+            element={
+              <ProtectedRoute>
+                <Modal title={'Информация о заказе'} onClose={closeModal}>
+                  <OrderInfo />
+                </Modal>
+              </ProtectedRoute>
+            }
+          />
+        </Routes>
+      )}
     </div>
   );
 };
