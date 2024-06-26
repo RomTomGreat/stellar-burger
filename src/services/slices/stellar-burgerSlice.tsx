@@ -66,7 +66,7 @@ export const fetchIngredients = createAsyncThunk(
   getIngredientsApi
 );
 export const fetchFeeds = createAsyncThunk('user/feed', getFeedsApi);
-export const fetchOrders = createAsyncThunk('user/orders', getOrdersApi);
+export const fetchOrders = createAsyncThunk('orders/user', getOrdersApi);
 export const fetchOrderBurger = createAsyncThunk(
   'orders/newOrder',
   orderBurgerApi
@@ -148,12 +148,6 @@ const stellarBurgerSlice = createSlice({
     },
     init(state) {
       state.isInit = true;
-    },
-    openModal(state) {
-      state.isModalOpened = true;
-    },
-    closeModal(state) {
-      state.isModalOpened = false;
     }
   },
   selectors: {
@@ -206,7 +200,7 @@ const stellarBurgerSlice = createSlice({
       })
       .addCase(fetchOrders.fulfilled, (state, action) => {
         state.loading = false;
-        state.orders = action.payload;
+        state.userOrders = action.payload;
       })
       .addCase(fetchOrderBurger.pending, (state) => {
         state.orderRequest = true;
@@ -312,9 +306,7 @@ export const {
   removeErrorText,
   closeOrderRequest,
   removeOrders,
-  init,
-  openModal,
-  closeModal
+  init
 } = stellarBurgerSlice.actions;
 
 export default stellarBurgerSlice.reducer;

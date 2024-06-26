@@ -10,12 +10,11 @@ import { TOrder } from '@utils-types';
 export const ProfileOrders: FC = () => {
   /** TODO: взять переменную из стора */
   const dispatch = useAppDispatch();
+  const orders: TOrder[] = useAppSelector(selectUserOrders);
 
   useEffect(() => {
     dispatch(fetchOrders());
   }, []);
-
-  const orders: TOrder[] = useAppSelector(selectUserOrders);
 
   return <ProfileOrdersUI orders={orders} />;
 };
