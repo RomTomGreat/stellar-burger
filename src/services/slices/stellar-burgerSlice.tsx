@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import {
   getFeedsApi,
   getIngredientsApi,
+  getOrderByNumberApi,
   getOrdersApi,
   getUserApi,
   loginUserApi,
@@ -67,6 +68,10 @@ export const fetchIngredients = createAsyncThunk(
 );
 export const fetchFeeds = createAsyncThunk('user/feed', getFeedsApi);
 export const fetchOrders = createAsyncThunk('orders/user', getOrdersApi);
+export const fetchOrdersByNumber = createAsyncThunk(
+  'orders/ordersByNumber',
+  getOrderByNumberApi
+);
 export const fetchOrderBurger = createAsyncThunk(
   'orders/newOrder',
   orderBurgerApi
@@ -184,6 +189,9 @@ const stellarBurgerSlice = createSlice({
       .addCase(fetchFeeds.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message as string;
+        state.orders = [];
+        state.totalOrders = 0;
+        state.dailyOrders = 0;
       })
       .addCase(fetchFeeds.fulfilled, (state, action) => {
         state.loading = false;
