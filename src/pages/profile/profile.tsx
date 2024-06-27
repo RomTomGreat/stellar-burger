@@ -1,12 +1,20 @@
+import { Preloader } from '@ui';
 import { ProfileUI } from '@ui-pages';
 import { FC, SyntheticEvent, useEffect, useState } from 'react';
+import {
+  fetchUserUpdate,
+  selectLoading,
+  selectUser
+} from '../../services/slices/stellar-burgerSlice';
+import { useAppDispatch, useAppSelector } from '../../services/store';
+import { useNavigate } from 'react-router-dom';
 
 export const Profile: FC = () => {
   /** TODO: взять переменную из стора */
-  const user = {
-    name: '',
-    email: ''
-  };
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+  const user = useAppSelector(selectUser);
+  const isLoading = useAppSelector(selectLoading);
 
   const [formValue, setFormValue] = useState({
     name: user.name,
@@ -29,6 +37,8 @@ export const Profile: FC = () => {
 
   const handleSubmit = (e: SyntheticEvent) => {
     e.preventDefault();
+    dispatch(fetchUserUpdate(formValue));
+    navigate('/');
   };
 
   const handleCancel = (e: SyntheticEvent) => {
@@ -47,6 +57,10 @@ export const Profile: FC = () => {
     }));
   };
 
+  if (isLoading) {
+    return <Preloader />;
+  }
+
   return (
     <ProfileUI
       formValue={formValue}
@@ -56,6 +70,4 @@ export const Profile: FC = () => {
       handleInputChange={handleInputChange}
     />
   );
-
-  return null;
 };
