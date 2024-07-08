@@ -1,27 +1,39 @@
-import { FC, useMemo } from 'react';
+import { FC, useEffect, useMemo, useState } from 'react';
 import { Preloader } from '../ui/preloader';
 import { OrderInfoUI } from '../ui/order-info';
 import { TIngredient } from '@utils-types';
+import { useAppSelector } from '../../services/store';
+import { selectIngredients } from '../../services/slices/stellar-burgerSlice';
+import { useParams } from 'react-router-dom';
+import { getOrderByNumberApi } from '@api';
 
 export const OrderInfo: FC = () => {
   /** TODO: взять переменные orderData и ingredients из стора */
-  const orderData = {
-    createdAt: '',
-    ingredients: [],
+  const [orderData, setOrderData] = useState({
     _id: '',
     status: '',
     name: '',
-    updatedAt: 'string',
-    number: 0
-  };
+    createdAt: '',
+    updatedAt: '',
+    number: 0,
+    ingredients: ['']
+  });
 
-  const ingredients: TIngredient[] = [];
+  const { number } = useParams();
 
-  /* Готовим данные для отображения */
+  useEffect(() => {
+    getOrderByNumberApi(Number(number)).then((data) =>
+      setOrderData(data.orders[0])
+    );
+  }, []);
+
+  const ingredients = useAppSelector(selectIngredients);
+
   const orderInfo = useMemo(() => {
     if (!orderData || !ingredients.length) return null;
 
     const date = new Date(orderData.createdAt);
+    const numberOrder = orderData.number;
 
     type TIngredientsWithCount = {
       [key: string]: TIngredient & { count: number };
@@ -55,7 +67,8 @@ export const OrderInfo: FC = () => {
       ...orderData,
       ingredientsInfo,
       date,
-      total
+      total,
+      numberOrder
     };
   }, [orderData, ingredients]);
 
