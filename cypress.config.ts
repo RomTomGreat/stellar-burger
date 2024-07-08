@@ -5,11 +5,7 @@ export default defineConfig({
     baseUrl: 'http://localhost:4000',
     setupNodeEvents(on, config) {
       // implement node event listeners here
-      config.env = {
-        ...process.env,
-        ...config.env
-      }
-      return config;
     },
+    defaultCommandTimeout: 10000
   },
 });

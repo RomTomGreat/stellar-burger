@@ -1,4 +1,4 @@
-import { configureStore } from '@reduxjs/toolkit';
+import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import {
   TypedUseSelectorHook,
   useDispatch as dispatchHook,
@@ -6,14 +6,16 @@ import {
 } from 'react-redux';
 import stellarBurgerSlice from './slices/stellar-burgerSlice';
 
+const rootReducer = combineReducers({
+  stellarBurger: stellarBurgerSlice
+});
+
 const store = configureStore({
-  reducer: {
-    stellarBurger: stellarBurgerSlice
-  },
+  reducer: rootReducer,
   devTools: process.env.NODE_ENV !== 'production'
 });
 
-export type RootState = ReturnType<typeof store.getState>;
+export type RootState = ReturnType<typeof rootReducer>;
 
 export type AppDispatch = typeof store.dispatch;
 
